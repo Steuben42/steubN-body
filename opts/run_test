@@ -1,0 +1,34 @@
+Simulator parameters.
+@SIM{
+	softening:0.0
+	stepsize:0.05
+	steps:10000
+}
+
+I/O parameters.
+@IO{
+	file_in:none
+	file_out:none
+	dir_out:none
+	console:0
+	out_freq:10
+}
+
+Generator parameters.
+@GEN{
+	mode:obj
+	objs:2
+	mass:uniform
+}
+
+Generator objects.
+@GAL{
+	id:1
+	center:(10.0,10.0,0.0)
+	normal:(0.0,1.0,0.0)
+	shape:spiral
+	r_a:2.0
+	r_b:1.0
+	height:0.5
+	particles:1000
+}

@@ -1,0 +1,140 @@
+#include "nbody.h"
+#include <math.h>
+#include <unistd.h>
+
+void create2body(double ecc, unsigned int flags, double l[], double dl[], double u[]) {
+  if(flags & DEBUG) printf("nbody_it.create2body@start\n");
+  // start
+  double x, y, z, vx, vy, vz, m;
+  double v;
+
+  // massflow
+  if(flags & MASS_NORM) {
+    // creates the initial conditions
+    if(flags & DEBUG) printf("nbody_it.create2body->massflow->MASS_NORM\n");
+    //r1 = (-1/2 0 0)
+    //r2 = (1/2 0 0)
+    //v1 = (0 -v/2 0)
+    //v2 = (0 v/2 0)
+    m = 1.0;
+    x = 0.5;
+    y = 0.0;
+    z = 0.0;
+
+    v = sqrt(G*2*(1 - ecc));
+    vx = 0.0;
+    vy = -v/2;
+    vz = 0.0;
+  }
+
+  // assign result
+  if(flags & DEBUG) printf("nbody_it.create2body@assign result\n");
+  // leapfrog assigning
+  if(l) {
+    l[1] = x;
+    l[2] = y;
+    l[3] = z;
+    l[4] = m;
+  
+    l[5] = -x;
+    l[6] = -y;
+    l[7] = -z;
+    l[8] = m;
+
+    dl[1] = vx;
+    dl[2] = vy;
+    dl[3] = vz;
+    dl[4] = 0.0;
+
+    dl[5] = -vx;
+    dl[6] = -vy;
+    dl[7] = -vz;
+    dl[8] = 0.0;
+  } else if(u) {
+    // rk4 assigning
+    u[1] = x;
+    u[2] = vx;
+    u[3] = y;
+    u[4] = vy;
+    u[5] = z;
+    u[6] = vz;
+    u[7] = m;
+
+    u[8] = -x;
+    u[9] = -vx;
+    u[10] = -y;
+    u[11] = -vy;
+    u[12] = -z;
+    u[13] = -vz;
+    u[14] = m;
+  }
+  // returns l in format of leapfrog, returns u in format of rk4
+
+  // finish
+  if(flags & DEBUG) printf("nbody_it.create2body@finish\n");
+}
+
+void create_sphere_simple(int n, unsigned int flags, double l[], double dl[],
+			  double u[]) {
+  double R = 0.5;
+  long idum = -1*((long) getpid());
+  int i;
+
+  double x, y, z, m, r, t, V, vx, vy, vz;
+
+  // average mass of particle 0.5
+  // total mass expect 0.5*pts
+  // total mass within sphere M*V_sphere/V_box = 0.5*pts*(4/3)*pi*r**3/(2R)**3
+  //                                           = pts*pi r**3/12R**3 = (pts*pi/12)*r^3
+  // V_circ = sqrt(GM/R) = sqrt(G*pts*pi/12r^2) = sqrt(G*pts*pi/12)/r
+  
+  for(i = 1; i<=n; i++) {
+    m = ran1(&idum);
+    x = ran1(&idum) - 0.5;
+    y = ran1(&idum) - 0.5;
+    z = ran1(&idum) - 0.5;
+    r = sqrt(pow(x, 2.0) + pow(y, 2.0) + pow(z, 2.0));
+
+    if(flags & DEBUG) printf("Round one generation [%d]\n", i);
+
+    if(R<r) {
+      while(R<r) {
+	x = ran1(&idum) - 0.5;
+	y = ran1(&idum) - 0.5;
+	z = ran1(&idum) - 0.5;
+
+	r = sqrt(pow(x, 2.0) + pow(y, 2.0) + pow(z, 2.0));
+      }
+    }
+
+    V = sqrt(G*n*M_PI/12.0)/r;
+    vx = sqrt(V)*y/r;
+    vy = -sqrt(V)*x/r;
+    vz = 0.0;
+      
+    if(l) {
+      if(!dl) {
+	printf("create_sphere_simple error: dl[] not provided\n");
+	exit(1);
+      }
+      l[l_i(i,4)] = m;
+      l[l_i(i,1)] = x;
+      l[l_i(i,2)] = y;
+      l[l_i(i,3)] = z;
+
+      dl[l_i(i,4)] = 0.0;
+      dl[l_i(i,1)] = vx;
+      dl[l_i(i,2)] = vy;
+      dl[l_i(i,3)] = vz;
+    }
+    if(u) {
+      u[rk_i(i,7)] = m;
+      u[rk_i(i,1)] = x;
+      u[rk_i(i,3)] = y;
+      u[rk_i(i,5)] = z;
+      u[rk_i(i,2)] = vx;
+      u[rk_i(i,4)] = vy;
+      u[rk_i(i,6)] = vz;
+    }
+  }
+}
