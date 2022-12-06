@@ -1,0 +1,15 @@
+Simulator parameters.
+@SIM{
+	softening:0.1000
+	stepsize:0.005
+	bh_mode:1
+	steps:1000
+}
+I/O parameters.
+@IO{
+	file_in:./data/gen_test/out.csv
+	file_out:none
+	dir_out:./data/test/
+	console:1
+	out_freq:10
+}
