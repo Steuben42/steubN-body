@@ -3,3 +3,5 @@ data/.gitignore!
 **/*~
 **/**/*~
 *~
+nbody_it
+generate_nbody
