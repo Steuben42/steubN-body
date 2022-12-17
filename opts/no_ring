@@ -1,0 +1,15 @@
+Simulator parameters.
+@SIM{
+	softening:0.0001
+	stepsize:0.005
+	bh_mode:1
+	steps:5000
+}
+I/O parameters.
+@IO{
+	file_in:./data/gen_test/solar_no_ring.csv
+	file_out:none
+	dir_out:./data/solar_system_test/
+	console:1
+	out_freq:10
+}

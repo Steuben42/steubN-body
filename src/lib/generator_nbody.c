@@ -2,7 +2,8 @@
 #include <math.h>
 #include <unistd.h>
 
-void create2body(double ecc, unsigned int flags, double l[], double dl[], double u[]) {
+void create2body(double ecc, unsigned int flags, double l[], double dl[],
+		 double u[]) {
   if(flags & DEBUG) printf("nbody_it.create2body@start\n");
   // start
   double x, y, z, vx, vy, vz, m;
@@ -68,7 +69,8 @@ void create_sphere_simple(int n, unsigned int flags, double l[], double dl[],
   // average mass of particle 0.5
   // total mass expect 0.5*pts
   // total mass within sphere M*V_sphere/V_box = 0.5*pts*(4/3)*pi*r**3/(2R)**3
-  //                                           = pts*pi r**3/12R**3 = (pts*pi/12)*r^3
+  //                                           = pts*pi r**3/12R**3
+  //                                           = (pts*pi/12)*r^3
   // V_circ = sqrt(GM/R) = sqrt(G*pts*pi/12r^2) = sqrt(G*pts*pi/12)/r
   
   for(i = 1; i<=n; i++) {
@@ -115,7 +117,8 @@ void create_sphere_simple(int n, unsigned int flags, double l[], double dl[],
 
 void create_solar(unsigned int flags, PARTICLE pts[]) {
   // 0 sun, 1 mer, 2 ven, 3 ear, 4 mar, 5 jup, 6 sat, 7 nep, 8 ura, 9 plu
-  double *r, *v, *theta, *phi, *mass; // theta measured from ecliptic (basically inc)
+  double *r, *v, *theta, *phi, *mass; // theta measured from ecliptic (basically
+  // inc)
   r = malloc(sizeof(double)*10);
   v = malloc(sizeof(double)*10);
   theta = malloc(sizeof(double)*10);
@@ -201,12 +204,14 @@ void create_solar(unsigned int flags, PARTICLE pts[]) {
   }
 }
 
+// creates a torus
 void create_ring(unsigned int flags, double r_inner, double width, double e_max,
 		 double height, double m_avg, double m_sig, double m_orb,
 		 int group, int n_tmp, PARTICLE pts[]) {
   int i;
   long idum = -1*((long) getpid());
   double a, b, e, r, m, theta, *vals, v;
+  // the ellipse's semi-major axis
   a = width/2.0;
 
   for(i=0;i<n_tmp;i++) {
@@ -227,13 +232,46 @@ void create_ring(unsigned int flags, double r_inner, double width, double e_max,
     vals[3] = b*sqrt(1 - sqr((r-r_inner-a)/a));
     vals[4] = -v*sin(theta);
     vals[5] = v*cos(theta);
-    vals[6] = 0.0;
+    // inc*(2*ran1 - 1) = phi
+    // inc = atan(a*height/r)
+    vals[6] = atan(a*height/r)*(2.0*ran1(&idum) - 1);
 
     pts[i] = create_point(vals, group);
   }
+
+  free(vals);
 }
 
+// it ain't workin :(
 void create_satellite(unsigned int flags, double mass, double a_ax, double ecc,
-		      double inc, double theta, double p_mass, PARTICLE *pt) {
+		      double inc, double theta_a, double theta_i, double theta_0,
+		      double p_mass, int group, PARTICLE *pt) {
+  // 1/a = 2/r - v^2/GM
+  // ra = a(1+e)
+  // rp = a(1-e)
+  POLAR pol_tmp;
+  double *vals = calloc(7, sizeof(double));
 
+  //r(a_ax, ecc, theta_0) = a_ax*(1-ecc**2)/(1+ecc*cos(theta_0));
+  //theta(theta_a, theta_0) = theta_a + theta_0;
+  //phi(theta_a, theta_i, theta_0, inc) = M_PI/2 - inc*sin(theta_0 - theta_i +
+  //                                                       theta_a);
+  //v(a, p_mass, r) = sqrt(((2/r) - 1/a)*G*p_mass);
+  //theta_v(ecc, theta_a, theta_0) = theta_a + atan2(ecc*sin(theta_0),
+  //                                                 1+ecc*cos(theta_0));
+  //phi_v(theta_0, theta_v) = theta_0 + M_PI/2 - theta_v;
+  
+  vals[0] = mass;
+  vals[1] = a_ax*(1-sqr(ecc))/(1+ecc*cos(theta_0));
+  vals[2] = theta_a + theta_0;
+  vals[3] = M_PI/2 - inc*sin(theta_0 - theta_i + theta_a);
+  vals[4] = sqrt(((2.0/vals[1]) - 1.0/a_ax)*G*p_mass);
+  vals[6] = M_PI/2.0 - atan(ecc*sin(theta_0-theta_i)/(1.0+ecc*cos(theta_0
+								  -theta_i)));
+  vals[5] = (theta_0 - theta_i + M_PI/2.0 - vals[6])*cos(vals[6]);
+  
+  pol_tmp = create_polar(vals, group);
+  pol_to_pt(&pol_tmp, 1, pt);
+
+  free(vals);
 }

@@ -159,8 +159,12 @@ void create_solar(unsigned int flags, PARTICLE pts[]);
 void create_ring(unsigned int flags, double r_inner, double width, double e_max,
 		 double height, double m_avg, double m_sig, double m_orb,
 		 int group, int n_tmp, PARTICLE pts[]);
+void create_satellite(unsigned int flags, double mass, double a_ax, double ecc,
+		      double inc, double theta_a, double theta_i, double theta_0,
+		      double p_mass, int group, PARTICLE *pt);
 
 // bhmode_nbody.c
+void confirm_critical();
 NODE *create_root_node(PARTICLE *pts, int n);
 NODE *create_node(NODE *p_node, int oct);
 PARTICLE create_point(double *vals, int group);

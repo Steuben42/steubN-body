@@ -17,6 +17,9 @@ double eta = ETA;
 void solve_leapfrog(double ecc, double t, uint steps, double h, int out_f,
 		    FILE *fp_i, FILE *fp_o, int fp_buff, char *fp_path,
 		    uint flags) {
+  printf("Support removed for this mode. Use BH-mode.\n");
+  exit(1);
+  
   // start
   if(flags & DEBUG) printf("nbody_it.solve_leapfrog@start\n");
   int i, j;
@@ -425,7 +428,7 @@ int main(int argc, char *argv[]) {
   if(flags & PRINT_DIR) fp_buff = snprintf(fp_path, BUFF, "%s", print_name);
   if(flags & PRINT_OPTS) print_opts(opts_file, flags, eta, ecc, read_name,
 				    h, out_f, print_name, print_name, steps);
-  
+  confirm_critical();
   
   double t;
   t = 0.0;

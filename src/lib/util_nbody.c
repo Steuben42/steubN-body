@@ -18,11 +18,12 @@
 #define CTX_GEN    4
 #define CTX_GENOBJ 5
 // Object context values
-#define CTX_2BODY  2
-#define CTX_SPHERE 3
-#define CTX_GROUP  4
-#define CTX_POINT  5
-#define CTX_RING   6
+#define CTX_2BODY      2
+#define CTX_SPHERE     3
+#define CTX_GROUP      4
+#define CTX_POINT      5
+#define CTX_RING       6
+#define CTX_SATELLITES 7
 // Context flags
 #define POLAR_FLAG (1 << 0)
 #define CART_FLAG  (1 << 1)
@@ -416,6 +417,7 @@ PARTICLE *obj_from_file(FILE *fp, unsigned int *flags) {
 	if(!strcmp(parent, "GROUP")) ctx = CTX_GROUP;
 	if(!strcmp(parent, "POINT")) ctx = CTX_POINT;
 	if(!strcmp(parent, "RING")) ctx = CTX_RING;
+	if(!strcmp(parent, "SATELLITES")) ctx = CTX_SATELLITES;
 	if(ctx==CTX_UNSPEC) raise_error(NAME_WARNING, parent, NULL, NULL, k);
 	continue;
       }
@@ -492,8 +494,39 @@ PARTICLE *obj_from_file(FILE *fp, unsigned int *flags) {
         if(*flags & DEBUG) printf("Generating ring...\n");
 	create_ring(*flags, r_inner, width, e_max, height, m_avg, m_sig, m_orb, 
 	            group, n_tmp, pts+ptidx);
-	ptidx += n_tmp;
+        ptidx += n_tmp;
+	continue;
       }
+      break;
+    case CTX_SATELLITES:
+      if(*flags & DEBUG) printf("Entering the satellites context...\n");
+      double mass, a_ax, ecc, inc, theta_a, theta_i, theta_0, p_mass;
+      tkn = strtok(l_buff, del_list);
+      mass = (double) atof(tkn);
+      k = 0;
+      while( (tkn = strtok(NULL, del_list)) != NULL ) {
+	switch(k) {
+	case 0:
+	  a_ax = (double) atof(tkn);
+	case 1:
+	  ecc = (double) atof(tkn);
+	case 2:
+	  inc = (double) atof(tkn);
+	case 3:
+	  theta_a = (double) atof(tkn);
+	case 4:
+	  theta_i = (double) atof(tkn);
+	case 5:
+	  theta_0 = (double) atof(tkn);
+	case 6:
+	  p_mass = (double) atof(tkn);
+	}
+	k++;
+      }
+      create_satellite(*flags, mass, a_ax, ecc, inc, theta_a, theta_i, theta_0,
+		       p_mass, group, &(pts[i]));
+      i++;
+      if(i==(ptidx+n_tmp)) ptidx = i;
       break;
     }
   }

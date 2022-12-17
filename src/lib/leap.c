@@ -35,6 +35,7 @@ void leap_std(double y[], double dydx[], double d2ydx2[], int n, double x,
   free_dvector(v, 1, n);
 }
 
+// leap adapted to take the particle type instead of an array
 void leap_pt(PARTICLE *pts, int n, double t, double h,
 	     void (*derivs_pt)(double, PARTICLE pt[])) {
   int i, k;

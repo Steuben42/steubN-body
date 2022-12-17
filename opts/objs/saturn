@@ -1,21 +1,15 @@
 @GROUP(1){
-	polar:5.68e+6,0.0,0.0,0.0,0.0,0.0,0.0
+	polar:1.0,0.0,0.0,0.0,0.0,0.0,0.0
 }
 
-@RING(100){
-	-- options: r_inner, width, e_max, height (b/a for ellipse), m_avg,
-	-- m_sig, m_orb
-	r_inner:2.1
-	width:1.1
-	e_max:0.05
-	height:0.6
-	m_avg:1.202e-15
-	m_sig:5.0e-16
-	m_orb:1.0
-	GEN
-}
-
-@SATELLITES(1){
-	-- fmt: mass, a (semi-major), ecc, inclination, theta (proceeding from
-	-- apoapsis), parent mass
+@SATELLITES(5){
+	-- fmt: mass, a (semi-major), ecc, inclination, theta_a (relative angle
+	-- of the apoapsis), theta_i (angle of the ascending node, proceeding
+	-- from apoapsis), theta_0 (proceeding from apoapsis, the initial angle),
+	-- parent mass
+	1.659e-7,3.870e-1,0.206,1.222e-1,5.760e+0,5.760e+0,0.0,1.0
+	2.448e-6,7.233e-1,0.007,5.934e-2,5.236e-1,5.236e+0,0.0,1.0
+	3.002e-6,1.000000,0.017,0.000000,0.000000,0.000000,0.0,1.0
+	3.228e-7,1.524e+0,0.094,3.142e-2,3.927e+0,1.571e+0,0.0,1.0
+	9.542e-4,5.204e+0,0.049,2.269e-2,4.712e+0,1.571e+0,0.0,1.0
 }

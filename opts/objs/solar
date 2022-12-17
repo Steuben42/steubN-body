@@ -1,6 +1,6 @@
 @GROUP(6){
-	--polar:m, r, theta, phi, v, t_v, p_v
-	--cart:m, x, y, z, v_x, v_y, v_z
+	-- polar:m, r, theta, phi, v, t_v, p_v
+	-- cart:m, x, y, z, v_x, v_y, v_z
 	polar:1.000000,0.000000,0.0,0.0000,0.000000,0.0000,0.0000
 	polar:1.659e-7,3.870e-1,0.0,1.5708,1.580000,1.5708,1.5708
 	polar:2.448e-6,7.233e-1,0.0,1.5708,1.167000,1.5708,1.5708
@@ -9,7 +9,7 @@
 	polar:9.542e-4,5.204000,0.0,1.5708,4.367e-1,1.5708,1.5708
 }
 
-@RING(100){
+@RING(1000){
 	-- options: r_inner, width, e_max, height (b/a for ellipse), m_avg,
 	-- m_sig, m_orb
 	r_inner:2.1

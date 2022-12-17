@@ -35,6 +35,7 @@ void l_derivs(double t, double y[], double d2ydt2[]) {
   }
 }
 
+// a simple magnitude function taking an array and a counter
 double mag(double a[], int c) {
   double val;
   int i;
@@ -43,6 +44,7 @@ double mag(double a[], int c) {
   return val;
 }
 
+// finding the magntiude of the difference of two arrays
 double mag_diff(double a[], double b[], int c) {
   double val = 0.0;
   int i;
@@ -52,10 +54,12 @@ double mag_diff(double a[], double b[], int c) {
   return val;
 }
 
+// a square function for increased peformance over pow()
 double sqr(double a) {
   return a*a;
 }
 
+// the bh-mode derivs function
 void derivs_pt(double t, PARTICLE pts[]) {
   int i;
   // fill force

@@ -1,9 +1,9 @@
 Simulator parameters.
 @SIM{
-	softening:0.1000
+	softening:0.0001
 	stepsize:0.005
 	bh_mode:1
-	steps:1000
+	steps:5000
 }
 I/O parameters.
 @IO{

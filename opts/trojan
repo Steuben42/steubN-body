@@ -1,0 +1,15 @@
+Simulator parameters.
+@SIM{
+	softening:0.0000
+	stepsize:0.01
+	bh_mode:1
+	steps:5000
+}
+I/O parameters.
+@IO{
+	file_in:./data/trojan_long_test/data_s_99999.csv
+	file_out:none
+	dir_out:./data/trojan_after_after/
+	console:1
+	out_freq:10
+}

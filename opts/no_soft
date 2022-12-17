@@ -1,0 +1,15 @@
+Simulator parameters.
+@SIM{
+	softening:0.0000
+	stepsize:0.01
+	bh_mode:1
+	steps:800
+}
+I/O parameters.
+@IO{
+	file_in:./data/gen_test/high_density.csv
+	file_out:none
+	dir_out:./data/high_density/
+	console:1
+	out_freq:10
+}
